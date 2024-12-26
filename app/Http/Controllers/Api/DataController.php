@@ -20,6 +20,15 @@ class DataController extends Controller
             'data' => $products            // ページネーションされたデータ
         ]);
     }
+
+
+    public function data()
+    {
+
+
+        
+
+    }
     
     //記事詳細
     public function shousai($id)
