@@ -21,6 +21,7 @@ class UsersController extends Controller
 
     public function login(Request $request)
     {
+        try {
 
 // バリデーションを追加
 $request->validate([
@@ -34,11 +35,13 @@ $password = $request->input('t2');
 
 // ユーザー情報を取得（メールアドレスで検索）
 $userinfo = Users::where('email', $email)->first();
-
+$userId = $userinfo->id;
 
 $user = new Users();
-//$user->name = $userinfo->name;
-$user->email = $userinfo->email;
+
+
+//echo $userinfo->$id;
+
 
 
 // ユーザーが存在しない場合
@@ -52,16 +55,18 @@ if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
     // ユーザー情報をセッションに保存
     session(['user' => $userinfo->email]);
 
-    // 10件の記事を取得
-    $articles = Articles::paginate(10);
+    $articles = Articles::where('articles_id',$userId)->paginate(10);
 
     // 記事ページを表示
     return view('articles.index', ['products' => $articles,'userid' => $user->id]);
 } else {
     // パスワードが一致しない場合
     return back()->withErrors(['password' => 'パスワードが間違っています']);
-}
+}    
+} catch (Exception $e) {
+
     }
+}
 
 
     //新規登録表示

@@ -53,12 +53,33 @@ class articlesController extends Controller
             'title' =>  'max:20',  // t1はメールアドレス
             'content' => 'required|min:10',  // t2はパスワード（6文字以上）
         ]);
+
+
+        /*
         // modelに書き込み
         articles::create([
             'title' => $title,
             'content' => $content,
             'created_at'=> now()
         ]);
+*/
+
+
+        $request->validate([
+            'title' => 'required|string|max:255',   // タイトル必須
+            'content' => 'required|string',          // 内容必須
+        ]);
+    
+        // ログインしているユーザーを取得
+        $user = Auth::user();
+    
+        // 記事を新規作成
+        $article = new Articles();
+        $article->title = $request->input('title');      // タイトル
+        $article->content = $request->input('content');  // 内容
+        $article->articles_id = $user->id;                    // ログインユーザーのIDを設定
+        $article->save();  // 記事を保存
+    
 
 
         return "投稿しました";

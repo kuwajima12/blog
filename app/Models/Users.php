@@ -13,6 +13,9 @@ class users extends Model
 
     public $timestamps = false;  // タイムスタンプを無効にする
 
-
+    public function articles()
+    {
+        return $this->hasMany(Article::class);  // 1人のユーザーが複数の記事を持つ
+    }
 
 }

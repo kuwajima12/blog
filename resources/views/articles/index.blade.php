@@ -44,6 +44,8 @@ text-align:center;
     </li>
     <li class="nav-item">
     
+
+    {{$userid}}
 @if (session('user'))
     <li class="nav-item">
         <a class="nav-link text-white" href="">{{ session('user') }}</a>
