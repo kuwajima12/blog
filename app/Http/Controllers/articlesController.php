@@ -57,7 +57,9 @@ class articlesController extends Controller
         articles::create([
             'title' => $title,
             'content' => $content,
+            'created_at'=> now()
         ]);
+
 
         return "投稿しました";
     }

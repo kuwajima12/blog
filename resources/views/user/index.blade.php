@@ -23,6 +23,7 @@
                           <div class="alert alert-danger">{{ $message }}</div>
                           @enderror
                           <button type="submit" class="btn btn-primary">ログイン</button>
+                          <a href="{{ route('User.touroku') }}">新規ユーザー登録</a>
                           </div>
                     </form>
                 </div>
