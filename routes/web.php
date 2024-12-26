@@ -11,17 +11,24 @@ use App\Http\Controllers\comentController;
 Route::get('/', [UsersController::class, 'index'])->name('login.index');
 
 Route::post('/', [UsersController::class, 'login']);
-//Route::get('/articles', [articlesController::class, 'index'])->name('articles.tes');
+
+
+
+
+//ユーザー登録
+Route::get('/Usertouroku', [UsersController::class, 'touroku'])->name('User.touroku');
+Route::post('/Usertouroku/post', [UsersController::class, 'register'])->name('User.post');
+
 
 //ログアウト処理
 Route::get('/articles/logout', [articlesController::class, 'logout'])->name('articles.logout');
 
 //記事詳細の表示
-Route::get('/articles_shousai', [articlesController::class, 'index'])->name('kiji.index');
-Route::get('/articles_shousai/{id}', [articlesController::class, 'shousai'])->name('kiji.shousai');
+Route::get('/articles_shousai', [articlesController::class, 'index'])->name('kiji.index')
+->middleware('auth');
 
-//ページネーション
-//Route::get('/articles', [articlesController::class, 'Pagenation'])->name('articles.Page');
+Route::get('/articles_shousai/{id}', [articlesController::class, 'shousai'])->name('kiji.shousai')
+->middleware('auth'); ;
 
 Route::get('/articles', [ArticleController::class,'Pagenation'])->name('articles.Page');
 
@@ -39,9 +46,6 @@ Route::get('/coment_ichiran/{id}', [comentController::class, 'index'])->name('co
 
 Route::get('/articles/{id}', [articlesController::class, 'show'])->name('articles.show');
 
-
-//ページネーション
-//Route::get('/page_nation', [PagenationController::class, 'index']);
 
 //記事投稿フォーム
 Route::get('/article_post', [articlesController::class, 'show'])->name('articles.post');

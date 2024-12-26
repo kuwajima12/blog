@@ -61,6 +61,9 @@ text-align:center;
 <h1>記事一覧</h1>
 <div class="container">
 
+
+
+
     @foreach ($products as $article)
         
         <div class="card" style="width: 40rem;">

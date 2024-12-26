@@ -13,15 +13,8 @@ use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
 
-
-
     public function index()
     {
-
-        
-
-
-
         return view('user.index');
     }
 
@@ -29,72 +22,82 @@ class UsersController extends Controller
     public function login(Request $request)
     {
 
+// バリデーションを追加
+$request->validate([
+    't1' => 'required|email',  // t1はメールアドレス
+    't2' => 'required|min:6',   // t2はパスワード（6文字以上）
+]);
 
-         // バリデーションを追加
-    $request->validate([
-        't1' => 'required|email',  // t1はメールアドレス
-        't2' => 'required|min:6',  // t2はパスワード（6文字以上）
-    ]);
+$email = $request->input('t1');
+$password = $request->input('t2');
 
-    $email = $request->input('t1');
-    $password = $request->input('t2');
 
-    // ユーザー情報を取得（メールアドレスで検索）
-    $userinfo = Users::where('email', $email)->first();
+// ユーザー情報を取得（メールアドレスで検索）
+$userinfo = Users::where('email', $email)->first();
 
-    // ユーザーが存在するか確認
-    if ($userinfo) {
-        // 認証
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
-            // ユーザー情報をセッションに保存
-            session(['user' => $userinfo->email]);
 
-            // 10件の記事を取得
-            $articles = Articles::paginate(10);
+$user = new Users();
+//$user->name = $userinfo->name;
+$user->email = $userinfo->email;
 
-            // 記事ページを表示
-           return view('articles.index', ['products' => $articles]);
 
-          //  return redirect()->route('articles.tes', ['products' => $articles]);
+// ユーザーが存在しない場合
+if (!$userinfo) {
+    return back()->withErrors(['email' => 'そのメールアドレスのユーザーは存在しません']);
+}
+$remember = $request->has('remember') ? true : false;
 
-        } else {
-            // パスワードが一致しない場合
-            return back()->withErrors(['password' => 'パスワードが間違っています']);
-        }
-    } else {
-        // メールアドレスが存在しない場合
-        return back()->withErrors(['email' => 'そのメールアドレスのユーザーは存在しません']);
+// パスワードが一致するか確認
+if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
+    // ユーザー情報をセッションに保存
+    session(['user' => $userinfo->email]);
+
+    // 10件の記事を取得
+    $articles = Articles::paginate(10);
+
+    // 記事ページを表示
+    return view('articles.index', ['products' => $articles,'userid' => $user->id]);
+} else {
+    // パスワードが一致しない場合
+    return back()->withErrors(['password' => 'パスワードが間違っています']);
+}
+    }
+
+
+    //新規登録表示
+    public function touroku()
+    {
+        return view('user.touroku');
+    }
+
+
+    //登録処理
+    public function register(Request $request)
+    {
+
+$email = $request->input('t1');
+$password = $request->input('t2');
+
+
+    // 同じメールアドレスが既に存在するか確認
+    $existingUser = Users::where('email', $email)->first();
+
+    if ($existingUser) {
+        // ユーザーが既に存在する場合、エラーメッセージを返す
+        return "既に存在しています";
     }
 
 
 
-
-
-
-        /*
-        $email = $request->input('t1');
-        $password = $request->input('t2');
+        $user = new Users();
+        $user->email = $email;
+        $user->password = Hash::make($password); // パスワードをハッシュ化
+        $user->save();
     
 
-        // ユーザー情報を取得
-        //$userinfo = users::where('email', $email)->where('password', $password)->first();
-        $userinfo = users::where('email', $email)->first();  // 最初の一致するユーザーを取得
-        
-        //認証
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
-
-            // ユーザー情報をセッションに保存
-           session(['user' => $userinfo->email]);
-    
-            //10件取得
-            $articles = articles::paginate(10);
-    
-            // 記事ページを表示
-            return view('articles.index', ['products' => $articles]);
-        } else {
-            return "ログインできませんでした";
-        }
-
-        */
+        return "登録しました";
     }
+
+
+
 }

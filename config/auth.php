@@ -39,6 +39,8 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            'remember' => true,  // Remember meトークンを有効にする
+
         ],
     ],
 
